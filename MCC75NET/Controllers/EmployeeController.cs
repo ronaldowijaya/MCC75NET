@@ -21,6 +21,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             //var employee = context.Employees.ToList();
             //var results = context.Employees.Join(
             //    context.Employees,
@@ -43,6 +51,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Details(string nik)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             //var employee = context.Employees.Find(id);
             var results = empRepo.GetEmployeeById(nik);
             return View(results);
@@ -61,6 +77,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var genders = new List<SelectListItem>
             {
                 new SelectListItem
@@ -102,6 +126,14 @@ namespace MCC75NET.Controllers
 
         public IActionResult Edit(string nik)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var employee = empRepo.GetEmployeeById(nik);
             var genders = new List<SelectListItem>
             {
@@ -147,6 +179,14 @@ namespace MCC75NET.Controllers
 
         public IActionResult Delete(string nik)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             //var employee = context.Employees.Find(nik);
             var employee = empRepo.GetEmployeeById(nik);
 

@@ -35,11 +35,19 @@ namespace MCC75NET.Controllers
             //        Major = e.Major,
             //        UniversityName = u.Name,
             //    });
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
             var results = eduRepo.GetEducationUniversities();
             return View(results);            
         }
         public IActionResult Details(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
             //var educations = context.Educations.Find(id);
             var results = eduRepo.GetEducationUniversitiesById(id);
             return View(results);
@@ -57,6 +65,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var universities = uniRepo.GetAll()
                 .Select(u => new SelectListItem
                 {
@@ -89,6 +105,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Edit(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var results = eduRepo.GetEducationUniversitiesById(id);
             var universities = uniRepo.GetAll()
                 .Select(u => new SelectListItem
@@ -120,6 +144,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Delete(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             //var education = context.Educations.Find(id);
             var results = eduRepo.GetEducationUniversitiesById(id);
             return View(results);

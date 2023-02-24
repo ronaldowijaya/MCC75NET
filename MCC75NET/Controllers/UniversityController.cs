@@ -23,15 +23,19 @@ namespace MCC75NET.Controllers
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
-            if (HttpContext.Session.GetString("role") != "Admin")
-            {
-                return RedirectToAction("Forbidden", "Error");
-            }
+            //if (HttpContext.Session.GetString("role") != "admin")
+            //{
+            //    return RedirectToAction("Forbidden", "Error");
+            //}
             var universities = repository.GetAll();
             return View(universities);
         }
         public IActionResult Details(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
             var university = repository.GetById(id);
             return View(university);
         }
@@ -45,6 +49,14 @@ namespace MCC75NET.Controllers
             //        Text=u.Name
             //    });
             //ViewBag.UniversityId = universities;
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             return View();
         }
 
@@ -60,6 +72,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Edit(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var university = repository.GetById(id);
             return View(university);
         }
@@ -78,6 +98,14 @@ namespace MCC75NET.Controllers
 
         public IActionResult Delete(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var university = repository.GetById(id);
             return View(university);
         }

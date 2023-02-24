@@ -19,16 +19,40 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var roles = roleRepo.GetAll();
             return View(roles);
         }
         public IActionResult Details(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var role = roleRepo.GetById(id);
             return View(role);
         }
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             return View();
         }
 
@@ -45,6 +69,14 @@ namespace MCC75NET.Controllers
 
         public IActionResult Edit(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var role = roleRepo.GetById(id);
             return View(role);
         }
@@ -63,6 +95,14 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Delete(int id)
         {
+            if (HttpContext.Session.GetString("email") == null)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+            if (HttpContext.Session.GetString("role") != "admin")
+            {
+                return RedirectToAction("Forbidden", "Error");
+            }
             var role = roleRepo.GetById(id);
             return View(role);
         }

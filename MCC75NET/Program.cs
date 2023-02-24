@@ -15,8 +15,7 @@ builder.Services.AddDbContext<MyContext>(options=>options.UseSqlServer(connectio
 // Configure Session
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-     
+    options.IdleTimeout = TimeSpan.FromSeconds(60);     
 });
 
 //Dependancy Injection
