@@ -2,12 +2,14 @@
 using MCC75NET.Models;
 using MCC75NET.Repositories;
 using MCC75NET.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace MCC75NET.Controllers
 {
+    [Authorize]
     public class EducationController : Controller
     {
         //private readonly MyContext context;
@@ -35,19 +37,22 @@ namespace MCC75NET.Controllers
             //        Major = e.Major,
             //        UniversityName = u.Name,
             //    });
-            if (HttpContext.Session.GetString("email") == null)
+
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
+
             var results = eduRepo.GetEducationUniversities();
             return View(results);            
         }
         public IActionResult Details(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
+
             //var educations = context.Educations.Find(id);
             var results = eduRepo.GetEducationUniversitiesById(id);
             return View(results);
@@ -63,16 +68,19 @@ namespace MCC75NET.Controllers
 
             //});
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
+
             var universities = uniRepo.GetAll()
                 .Select(u => new SelectListItem
                 {
@@ -84,6 +92,7 @@ namespace MCC75NET.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(EducationUniversityVM educationVM)
@@ -103,16 +112,19 @@ namespace MCC75NET.Controllers
                 return RedirectToAction(nameof(Index));
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
+
             var results = eduRepo.GetEducationUniversitiesById(id);
             var universities = uniRepo.GetAll()
                 .Select(u => new SelectListItem
@@ -124,6 +136,7 @@ namespace MCC75NET.Controllers
             return View(results);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(EducationUniversityVM education)
@@ -142,16 +155,19 @@ namespace MCC75NET.Controllers
             }
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
+
             //var education = context.Educations.Find(id);
             var results = eduRepo.GetEducationUniversitiesById(id);
             return View(results);
@@ -167,6 +183,7 @@ namespace MCC75NET.Controllers
             //return View(education);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Remove(int id)

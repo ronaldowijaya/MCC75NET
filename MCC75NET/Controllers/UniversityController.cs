@@ -2,6 +2,7 @@
 using MCC75NET.Models;
 using MCC75NET.Repositories;
 using MCC75NET.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using NuGet.Protocol.Core.Types;
 
 namespace MCC75NET.Controllers
 {
+    [Authorize]
     public class UniversityController : Controller
     {       
         private readonly UniversityRepository repository;
@@ -19,10 +21,11 @@ namespace MCC75NET.Controllers
 
         public IActionResult Index()
         {
-            if(HttpContext.Session.GetString("email") == null)
+            /*if(HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
+
             //if (HttpContext.Session.GetString("role") != "admin")
             //{
             //    return RedirectToAction("Forbidden", "Error");
@@ -32,14 +35,16 @@ namespace MCC75NET.Controllers
         }
         public IActionResult Details(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
+
             var university = repository.GetById(id);
             return View(university);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             //var universities = context.Universities.ToList()
@@ -49,41 +54,45 @@ namespace MCC75NET.Controllers
             //        Text=u.Name
             //    });
             //ViewBag.UniversityId = universities;
-            if (HttpContext.Session.GetString("email") == null)
+
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(University university)
-        {
-      
+        {      
             var result = repository.Insert(university);
             if (result > 0)
             return RedirectToAction(nameof(Index));
             return View();
         }
+
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
             var university = repository.GetById(id);
             return View(university);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(University university)
@@ -96,20 +105,22 @@ namespace MCC75NET.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            if (HttpContext.Session.GetString("email") == null)
+            /*if (HttpContext.Session.GetString("email") == null)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
             if (HttpContext.Session.GetString("role") != "admin")
             {
                 return RedirectToAction("Forbidden", "Error");
-            }
+            }*/
             var university = repository.GetById(id);
             return View(university);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Remove(int id)

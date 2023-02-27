@@ -9,7 +9,6 @@ namespace MCC75NET.Repositories
     public class AccountRepository : IRepository<string, Account>
     {
         private readonly MyContext context;
-
         private readonly EmployeeRepository employeeRepository;
 
 
@@ -207,12 +206,21 @@ namespace MCC75NET.Repositories
                             {
                                 Email = e.Email,
                                 FullName = String.Concat(e.FirstName, " ", e.LastName),
-                                Role = r.Name
+                                //Role = r.Name
                             }).FirstOrDefault();
 
             return userdata;
         }
 
+        public List<string> GetRolesByNik(string email) 
+        {
+            var getNik = context.Employees.FirstOrDefault(e => e.Email == email);
+            return context.AccountRoles.Where(ar=>ar.AccountNik == getNik.Nik).Join(
+                context.Roles,
+                ar => ar.RoleId,
+                r => r.Id,
+                (ar,r)=>r.Name).ToList();   
+        }
 
     }
 }

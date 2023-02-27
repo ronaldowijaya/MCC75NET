@@ -5,8 +5,12 @@ using MCC75NET.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NuGet.Protocol.Core.Types;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MCC75NET.Controllers
 {
@@ -15,13 +19,14 @@ namespace MCC75NET.Controllers
         //private readonly MyContext context;
         private readonly AccountRepository accRepo;
         private readonly EmployeeRepository empRepo;
+        private readonly IConfiguration configuration;
 
-
-        public AccountController( AccountRepository accRepo, EmployeeRepository empRepo)
+        public AccountController(IConfiguration configuration, AccountRepository accRepo, EmployeeRepository empRepo)
         {
             //this.context = context;
             this.accRepo = accRepo;
             this.empRepo = empRepo;
+            this.configuration = configuration;
         }
         public IActionResult Index()
         {
@@ -169,9 +174,35 @@ namespace MCC75NET.Controllers
             {
                 //var userdata = repository.Login(loginVM);
                 var userdata = accRepo.GetUserdata(loginVM.Email);
-                HttpContext.Session.SetString("email", userdata.Email);
-                HttpContext.Session.SetString("fullName", userdata.FullName);
-                HttpContext.Session.SetString("role", userdata.Role);
+                var roles = accRepo.GetRolesByNik(loginVM.Email);
+                //HttpContext.Session.SetString("email", userdata.Email);
+                //HttpContext.Session.SetString("fullName", userdata.FullName);
+                //HttpContext.Session.SetString("role", userdata.Role);
+                var claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.Email, userdata.Email),
+                    new Claim(ClaimTypes.Name, userdata.FullName)
+                };
+
+                foreach (var item in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, item));
+                }
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]));
+                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                    issuer: configuration["JWT:Issuer"],
+                    audience: configuration["JWT:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(10),
+                    signingCredentials: signIn
+                    );
+
+                var generateToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+                HttpContext.Session.SetString("jwtoken", generateToken);
+
                 return RedirectToAction("Index", "Home");
             }
             ModelState.AddModelError(string.Empty, "Account or Password Not Found!");
